@@ -12,6 +12,7 @@ class ExplorerNodeManager implements Disposable {
     private explorerNodeMap: Map<string, LeetCodeNode> = new Map<string, LeetCodeNode>();
     private companySet: Set<string> = new Set<string>();
     private tagSet: Set<string> = new Set<string>();
+    public sortBy: string = "id";
 
     public async refreshCache(): Promise<void> {
         this.dispose();
@@ -142,7 +143,27 @@ class ExplorerNodeManager implements Disposable {
                     break;
             }
         }
+        let parent = this;
+        res.sort((a: LeetCodeNode, b: LeetCodeNode): number => {
+            if (parent.sortBy == "id" ){
+                return parseInt(a.id) - parseInt(b.id);
+            } else {
+                let ad = parent.checkDifficulty(a)*100000 + parseInt(a.id);
+                let bd = parent.checkDifficulty(b)*100000 + parseInt(b.id);
+                return ad - bd;
+            }
+        });
         return res;
+    }
+
+    private checkDifficulty(node: LeetCodeNode): number{
+        let diff :string = node.difficulty.toLowerCase();
+        if (diff == "hard")
+            return 3;
+        else if (diff == "medium")
+            return 2;
+        else
+            return 1;
     }
 
     public dispose(): void {

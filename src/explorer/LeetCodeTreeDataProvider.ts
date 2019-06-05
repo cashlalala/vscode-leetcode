@@ -39,7 +39,7 @@ export class LeetCodeTreeDataProvider implements vscode.TreeDataProvider<LeetCod
         }
 
         return {
-            label: element.isProblem ? `[${element.id}] ${element.name}` : element.name,
+            label: element.isProblem ? `[${element.id}][${element.difficulty}] ${element.name}` : element.name,
             tooltip: this.getSubCategoryTooltip(element),
             collapsibleState: element.isProblem ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed,
             contextValue: element.isProblem ? "problem" : element.id.toLowerCase(),
@@ -86,7 +86,12 @@ export class LeetCodeTreeDataProvider implements vscode.TreeDataProvider<LeetCod
         }
         switch (element.state) {
             case ProblemState.AC:
-                return this.context.asAbsolutePath(path.join("resources", "check.png"));
+                let difficulty : string = element.difficulty.toLowerCase();
+                let png : string = (difficulty === "hard")? "check-red.png":
+                                  (difficulty === "medium")? "check-org.png":
+                                  (difficulty === "easy")? "check-grn.png":
+                                  "check.png";
+                return this.context.asAbsolutePath(path.join("resources", png));
             case ProblemState.NotAC:
                 return this.context.asAbsolutePath(path.join("resources", "x.png"));
             case ProblemState.Unknown:
